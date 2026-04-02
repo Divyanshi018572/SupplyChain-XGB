@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints
+archive.zip
+data/
+models/delivery_rf.pkl
