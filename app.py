@@ -107,7 +107,10 @@ def load_assets():
     try:
         # Load all 3 delivery models
         del_model_opt = joblib.load(os.path.join(models_dir, 'delivery_xgboost_opt.pkl'))
-        del_model_rf = joblib.load(os.path.join(models_dir, 'delivery_rf.pkl'))
+        try:
+            del_model_rf = joblib.load(os.path.join(models_dir, 'delivery_rf.pkl'))
+        except FileNotFoundError:
+            del_model_rf = None
         del_model_base = joblib.load(os.path.join(models_dir, 'delivery_xgboost_base.pkl'))
         
         fraud_model = joblib.load(os.path.join(models_dir, 'fraud_xgboost.pkl'))
@@ -229,7 +232,9 @@ elif selected_task == "Delivery Risk Engine":
     if "Optimized XGBoost" in selected_model_name:
         del_model = del_models['opt']
     elif "Random Forest" in selected_model_name:
-        del_model = del_models['rf']
+        del_model = del_models['rf'] if del_models['rf'] is not None else del_models['opt']
+        if del_models['rf'] is None:
+            st.warning("Note: The 723MB Random Forest model was naturally excluded from this server deploy to preserve fast performance. Using the Optimized XGBoost fallback.")
     else:
         del_model = del_models['base']
     
